@@ -2,6 +2,12 @@
 
 A self-contained Objective-C feature module demonstrating how to quickly add a polished demo feature with REST API integration to an existing UIKit app.
 
+## Demo
+
+![Demo](screenshots/demo.gif)
+
+List -> Detail -> Create/Edit form, all driven by `NSURLSession` against a live REST API.
+
 ## What This Demonstrates
 
 - Adding a complete feature module to an existing Objective-C iOS app
@@ -22,6 +28,24 @@ A self-contained Objective-C feature module demonstrating how to quickly add a p
 3. **Post Form** - Create/edit form with field validation, simulated POST/PUT requests
 
 ## Architecture
+
+```mermaid
+flowchart TD
+    Host["Host App ViewController"] -->|"presentFromViewController:delegate:"| Module["HTDemoModule (entry point)"]
+    Module --> Nav["UINavigationController"]
+    Nav --> List["HTPostListViewController"]
+    List -->|"tap row"| Detail["HTPostDetailViewController"]
+    List -->|"tap +"| Form["HTPostFormViewController"]
+    Detail -->|"Edit"| Form
+
+    List --> API["HTAPIClient (singleton)"]
+    Detail --> API
+    Form --> API
+    API -->|"NSURLSession"| REST[("JSONPlaceholder REST API")]
+    API --> Model["HTPost model"]
+
+    Module -.->|"HTDemoModuleDelegate callbacks"| Host
+```
 
 - **HT prefix** - All classes use the HT (Hau Tran) prefix
 - **Single entry point** - `HTDemoModule` presents the entire feature from any view controller
